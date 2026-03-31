@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>CodeLens Hub | Interactive Language Tutorials & Live Editors</title>
+  <!-- Google Fonts + Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #ffffff;
+      color: #1a2c3e;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    /* ferozi / turquoise accent */
+    :root {
+      --ferozi: #14b8a6;
+      --ferozi-dark: #0d9488;
+      --ferozi-light: #99f6e4;
+      --ferozi-soft: #ccfbf1;
+      --gray-light: #f8fafc;
+      --gray-border: #e2e8f0;
+      --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+      --shadow-lg: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ========== ENHANCED NAVBAR WITH MEGA DROPDOWN ========== */
+    .navbar {
+      background: white;
+      border-bottom: 1px solid var(--gray-border);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+      background-color: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      padding: 0.9rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .logo h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #0f172a, var(--ferozi));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .logo span {
+      font-size: 0.75rem;
+      color: #475569;
+      display: block;
+      font-weight: 400;
+    }
+
+    /* main navigation */
+    .nav-links {
+      display: flex;
+      gap: 0.5rem;
+      list-style: none;
+      flex-wrap: wrap;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-item {
+      position: relative;
+    }
+
+    .nav-item > a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      color: #1e293b;
+      padding: 0.6rem 1rem;
+      border-radius: 40px;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+    }
+
+    .nav-item > a i {
+      font-size: 0.9rem;
+      transition: transform 0.2s;
+    }
+
+    .nav-item > a:hover {
+      background: var(--ferozi-light);
+      color: var(--ferozi-dark);
+    }
+
+    /* MEGA DROPDOWN (large size) */
+    .mega-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      width: 560px;
+      background: white;
+      border-radius: 28px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--gray-border);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      z-index: 1050;
+      pointer-events: none;
+    }
+
+    /* hover trigger */
+    .nav-item:hover .mega-dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+
+    /* dropdown content grid */
+    .dropdown-content {
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+    }
+
+    .dropdown-section h4 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--ferozi);
+      margin-bottom: 0.8rem;
+      font-weight: 700;
+    }
+
+    .dropdown-section ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .dropdown-section ul li {
+      margin-bottom: 0.6rem;
+    }
+
+    .dropdown-section ul li a {
+      text-decoration: none;
+      color: #334155;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: 0.2s;
+      padding: 6px 8px;
+      border-radius: 12px;
+    }
+
+    .dropdown-section ul li a i {
+      width: 22px;
+      color: var(--ferozi);
+      font-size: 0.85rem;
+    }
+
+    .dropdown-section ul li a:hover {
+      background: var(--ferozi-soft);
+      color: var(--ferozi-dark);
+      transform: translateX(4px);
+    }
+
+    .dropdown-feature {
+      background: var(--ferozi-soft);
+      border-radius: 20px;
+      padding: 1rem;
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+
+    .dropdown-feature p {
+      font-size: 0.8rem;
+      color: #0f3b38;
+      margin-bottom: 8px;
+    }
+
+    .dropdown-feature .btn-sm {
+      background: var(--ferozi);
+      color: white;
+      border: none;
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+
+    /* for right alignment of last items */
+    .nav-item:last-child .mega-dropdown {
+      left: auto;
+      right: 0;
+      transform: translateX(0) translateY(10px);
+    }
+    .nav-item:last-child:hover .mega-dropdown {
+      transform: translateX(0) translateY(0);
+    }
+
+    /* hero & rest styles */
+    .hero {
+      padding: 5rem 0 4rem;
+      background: linear-gradient(145deg, #ffffff 0%, #f0fdfa 100%);
+    }
+    .hero-grid {
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+    .hero-text {
+      flex: 1;
+    }
+    .hero-text h1 {
+      font-size: 3.2rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1.2rem;
+      background: linear-gradient(to right, #0f172a, var(--ferozi));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero-text p {
+      font-size: 1.2rem;
+      color: #334155;
+      margin-bottom: 2rem;
+    }
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.8rem;
+      border-radius: 40px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.2s;
+      font-size: 1rem;
+    }
+    .btn-primary {
+      background: var(--ferozi);
+      color: white;
+      box-shadow: 0 8px 18px rgba(20, 184, 166, 0.2);
+    }
+    .btn-primary:hover {
+      background: var(--ferozi-dark);
+      transform: translateY(-2px);
+    }
+    .btn-outline {
+      border: 1.5px solid var(--ferozi);
+      color: var(--ferozi);
+      background: transparent;
+    }
+    .btn-outline:hover {
+      background: var(--ferozi-light);
+      border-color: var(--ferozi-dark);
+    }
+    .hero-stats {
+      flex: 0.8;
+      background: white;
+      border-radius: 32px;
+      padding: 1.8rem;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--gray-border);
+    }
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .stat-icon {
+      background: var(--ferozi-light);
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 30px;
+      color: var(--ferozi-dark);
+      font-size: 1.4rem;
+    }
+    .section-title {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin: 3rem 0 1rem;
+      color: #0f172a;
+    }
+    .section-sub {
+      text-align: center;
+      color: #475569;
+      margin-bottom: 3rem;
+      font-size: 1.1rem;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+    .lang-card {
+      background: white;
+      border-radius: 28px;
+      border: 1px solid var(--gray-border);
+      padding: 1.8rem;
+      transition: all 0.25s ease;
+      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.02);
+    }
+    .lang-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--ferozi);
+      box-shadow: 0 20px 30px -12px rgba(20, 184, 166, 0.15);
+    }
+    .card-icon {
+      font-size: 2.5rem;
+      background: var(--ferozi-light);
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 20px;
+      margin-bottom: 1.2rem;
+      color: var(--ferozi-dark);
+    }
+    .lang-card h3 {
+      font-size: 1.6rem;
+      margin-bottom: 0.5rem;
+    }
+    .lang-card p {
+      color: #475569;
+      margin-bottom: 1.5rem;
+    }
+    .card-link {
+      text-decoration: none;
+      font-weight: 600;
+      color: var(--ferozi);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .features {
+      background: var(--gray-light);
+      padding: 3rem 0;
+      border-radius: 48px 48px 0 0;
+      margin-top: 2rem;
+    }
+    .features-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+    .feature {
+      flex: 1;
+      min-width: 200px;
+      text-align: center;
+      padding: 1.5rem;
+    }
+    .feature i {
+      font-size: 2.5rem;
+      color: var(--ferozi);
+      margin-bottom: 1rem;
+    }
+    .footer {
+      background: #0f172a;
+      color: #cbd5e6;
+      padding: 3rem 0 1.5rem;
+      margin-top: 3rem;
+    }
+    .footer-content {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+    .footer-col h4 {
+      color: white;
+      margin-bottom: 1rem;
+    }
+    .footer-col ul {
+      list-style: none;
+    }
+    .footer-col li {
+      margin-bottom: 0.5rem;
+    }
+    .footer-col a {
+      color: #94a3b8;
+      text-decoration: none;
+    }
+    .footer-col a:hover {
+      color: var(--ferozi);
+    }
+    .copyright {
+      text-align: center;
+      padding-top: 2rem;
+      margin-top: 2rem;
+      border-top: 1px solid #1e293b;
+      font-size: 0.85rem;
+    }
+    @media (max-width: 880px) {
+      .nav-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .nav-links {
+        justify-content: center;
+      }
+      .mega-dropdown {
+        width: 480px;
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) translateY(10px);
+      }
+      .nav-item:hover .mega-dropdown {
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+    @media (max-width: 640px) {
+      .mega-dropdown {
+        width: 90vw;
+        left: 50% !important;
+      }
+      .dropdown-content {
+        grid-template-columns: 1fr;
+      }
+      .hero-text h1 {
+        font-size: 2rem;
+      }
+      .container {
+        padding: 0 1rem;
+      }
+    }
+    .dropdown-badge {
+      background: var(--ferozi);
+      color: white;
+      font-size: 0.65rem;
+      border-radius: 30px;
+      padding: 2px 8px;
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== ENHANCED NAVIGATION WITH LARGE SMOOTH DROPDOWNS ========== -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <h1>CodeLens <span style="color: var(--ferozi);">Hub</span></h1>
+        <span>interactive · live editors · tutorials</span>
+      </div>
+      <ul class="nav-links">
+        <!-- Home (simple, no dropdown) -->
+        <li class="nav-item">
+          <a href="index.html"><i class="fas fa-home"></i> Home</a>
+        </li>
+
+        <!-- Python Dropdown - LARGE SIZE -->
+        <li class="nav-item">
+          <a href="python/index.html"><i class="fab fa-python"></i> Python <i class="fas fa-chevron-down"></i></a>
+          <div class="mega-dropdown">
+            <div class="dropdown-content">
+              <div class="dropdown-section">
+                <h4><i class="fas fa-graduation-cap"></i> Tutorials</h4>
+                <ul>
+                  <li><a href="python/basics.html"><i class="fas fa-play-circle"></i> Python Basics</a></li>
+                  <li><a href="python/data-structures.html"><i class="fas fa-database"></i> Data Structures</a></li>
+                  <li><a href="python/oop.html"><i class="fas fa-cube"></i> Object Oriented</a></li>
+                  <li><a href="python/live-editor.html"><i class="fas fa-terminal"></i> Live Compiler</a></li>
+                </ul>
+              </div>
+              <div class="dropdown-section">
+                <h4><i class="fas fa-code-branch"></i> Snippets & Tools</h4>
+                <ul>
+                  <li><a href="python/snippets.html"><i class="fas fa-paste"></i> 50+ Code Snippets</a></li>
+                  <li><a href="python/projects.html"><i class="fas fa-laptop-code"></i> Mini Projects</a></li>
+                  <li><a href="python/cheatsheet.html"><i class="fas fa-scroll"></i> Cheatsheet</a></li>
+                </ul>
+                <div class="dropdown-feature">
+                  <p>✨ Interactive Python Runner</p>
+                  <a href="python/live-editor.html" class="btn-sm">Try Editor <i class="fas fa-arrow-right"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- JavaScript Dropdown -->
+        <li class="nav-item">
+          <a href="javascript/index.html"><i class="fab fa-js"></i> JavaScript <i class="fas fa-chevron-down"></i></a>
+          <div class="mega-dropdown">
+            <div class="dropdown-content">
+              <div class="dropdown-section">
+                <h4><i class="fas fa-book"></i> JS Core</h4>
+                <ul>
+                  <li><a href="javascript/es6.html"><i class="fas fa-star"></i> ES6+ Features</a></li>
+                  <li><a href="javascript/dom.html"><i class="fab fa-html5"></i> DOM Manipulation</a></li>
+                  <li><a href="javascript/async.html"><i class="fas fa-clock"></i> Async/Await</a></li>
+                </ul>
+              </div>
+              <div class="dropdown-section">
+                <h4><i class="fas fa-cogs"></i> Playground</h4>
+                <ul>
+                  <li><a href="javascript/compiler.html"><i class="fas fa-play"></i> Node.js Runner</a></li>
+                  <li><a href="javascript/snippets.html"><i class="fas fa-copy"></i> Code Snippets</a></li>
+                </ul>
+                <div class="dropdown-feature">
+                  <p>⚡ Live JavaScript Execution</p>
+                  <a href="javascript/compiler.html" class="btn-sm">Run JS Code</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- HTML/CSS Dropdown -->
+        <li class="nav-item">
+          <a href="html-css/index.html"><i class="fab fa-html5"></i> HTML/CSS <i class="fas fa-chevron-down"></i></a>
+          <div class="mega-dropdown">
+            <div class="dropdown-content">
+              <div class="dropdown-section">
+                <h4><i class="fas fa-paint-brush"></i> Frontend Mastery</h4>
+                <ul>
+                  <li><a href="html-css/responsive.html"><i class="fas fa-mobile-alt"></i> Responsive Design</a></li>
+                  <li><a href="html-css/flex-grid.html"><i class="fas fa-th"></i> Flexbox & Grid</a></li>
+                  <li><a href="html-css/animations.html"><i class="fas fa-magic"></i> CSS Animations</a></li>
+                </ul>
+              </div>
+              <div class="dropdown-section">
+                <h4><i class="fas fa-eye"></i> Live Preview</h4>
+                <ul>
+                  <li><a href="html-css/live-editor.html"><i class="fas fa-code"></i> Interactive Editor</a></li>
+                  <li><a href="html-css/templates.html"><i class="fas fa-file-code"></i> UI Templates</a></li>
+                </ul>
+                <div class="dropdown-feature">
+                  <p>🖥️ Instant HTML/CSS Preview</p>
+                  <a href="html-css/live-editor.html" class="btn-sm">Open Sandbox</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- C++ Dropdown -->
+        <li class="nav-item">
+          <a href="cpp/index.html"><i class="fas fa-microchip"></i> C++ <i class="fas fa-chevron-down"></i></a>
+          <div class="mega-dropdown">
+            <div class="dropdown-content">
+              <div class="dropdown-section">
+                <h4><i class="fas fa-code"></i> DSA & Algorithms</h4>
+                <ul>
+                  <li><a href="cpp/basics.html"><i class="fas fa-layer-group"></i> Syntax & OOP</a></li>
+                  <li><a href="cpp/stl.html"><i class="fas fa-boxes"></i> STL Containers</a></li>
+                  <li><a href="cpp/pointers.html"><i class="fas fa-memory"></i> Pointers & Memory</a></li>
+                </ul>
+              </div>
+              <div class="dropdown-section">
+                <h4><i class="fas fa-terminal"></i> Compiler Zone</h4>
+                <ul>
+                  <li><a href="cpp/compiler.html"><i class="fas fa-play-circle"></i> C++ Runner (GCC)</a></li>
+                  <li><a href="cpp/snippets.html"><i class="fas fa-paste"></i> Problem Solutions</a></li>
+                </ul>
+                <div class="dropdown-feature">
+                  <p>⚙️ Run C++ online</p>
+                  <a href="cpp/compiler.html" class="btn-sm">Start Coding</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- Java Dropdown -->
+        <li class="nav-item">
+          <a href="java/index.html"><i class="fab fa-java"></i> Java <i class="fas fa-chevron-down"></i></a>
+          <div class="mega-dropdown">
+            <div class="dropdown-content">
+              <div class="dropdown-section">
+                <h4><i class="fas fa-coffee"></i> Core Java</h4>
+                <ul>
+                  <li><a href="java/oop.html"><i class="fas fa-crown"></i> OOP Concepts</a></li>
+                  <li><a href="java/collections.html"><i class="fas fa-list"></i> Collections Framework</a></li>
+                  <li><a href="java/exceptions.html"><i class="fas fa-exclamation-triangle"></i> Exception Handling</a></li>
+                </ul>
+              </div>
+              <div class="dropdown-section">
+                <h4><i class="fas fa-laptop"></i> Run Java</h4>
+                <ul>
+                  <li><a href="java/compiler.html"><i class="fas fa-play"></i> Online Compiler</a></li>
+                  <li><a href="java/snippets.html"><i class="fas fa-copy"></i> Snippets Library</a></li>
+                </ul>
+                <div class="dropdown-feature">
+                  <p>☕ Compile & Execute Java</p>
+                  <a href="java/compiler.html" class="btn-sm">Java Playground</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- Go Dropdown -->
+        <li class="nav-item">
+          <a href="go/index.html"><i class="fab fa-golang"></i> Go <i class="fas fa-chevron-down"></i></a>
+          <div class="mega-dropdown">
+            <div class="dropdown-content">
+              <div class="dropdown-section">
+                <h4><i class="fas fa-rocket"></i> Go Fundamentals</h4>
+                <ul>
+                  <li><a href="go/goroutines.html"><i class="fas fa-tachometer-alt"></i> Concurrency</a></li>
+                  <li><a href="go/packages.html"><i class="fas fa-cubes"></i> Packages & Modules</a></li>
+                </ul>
+              </div>
+              <div class="dropdown-section">
+                <h4><i class="fas fa-play"></i> Go Playground</h4>
+                <ul>
+                  <li><a href="go/compiler.html"><i class="fas fa-code"></i> Run Go Code</a></li>
+                </ul>
+                <div class="dropdown-feature">
+                  <p>🐹 Fast, concurrent execution</p>
+                  <a href="go/compiler.html" class="btn-sm">Try Go</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- Rust Dropdown -->
+        <li class="nav-item">
+          <a href="rust/index.html"><i class="fas fa-shield-alt"></i> Rust <i class="fas fa-chevron-down"></i></a>
+          <div class="mega-dropdown">
+            <div class="dropdown-content">
+              <div class="dropdown-section">
+                <h4><i class="fas fa-shield-virus"></i> Safety & Speed</h4>
+                <ul>
+                  <li><a href="rust/ownership.html"><i class="fas fa-hand-holding-heart"></i> Ownership Model</a></li>
+                  <li><a href="rust/patterns.html"><i class="fas fa-code-branch"></i> Pattern Matching</a></li>
+                </ul>
+              </div>
+              <div class="dropdown-section">
+                <h4><i class="fas fa-terminal"></i> Rust Runner</h4>
+                <ul>
+                  <li><a href="rust/compiler.html"><i class="fas fa-play"></i> Execute Rust</a></li>
+                  <li><a href="rust/examples.html"><i class="fas fa-list-ul"></i> Examples</a></li>
+                </ul>
+                <div class="dropdown-feature">
+                  <p>🦀 Memory-safe playground</p>
+                  <a href="rust/compiler.html" class="btn-sm">Open Rust REPL</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <!-- hero same as before but with fresh content -->
+    <div class="hero">
+      <div class="container hero-grid">
+        <div class="hero-text">
+          <h1>Learn to code <br>with live compilers & previews</h1>
+          <p>Master Python, JavaScript, C++, and 10+ languages. Every language gets its own dedicated page with copy-paste snippets, real-time editor, and instant execution.</p>
+          <div class="hero-buttons">
+            <a href="#languages" class="btn btn-primary"><i class="fas fa-arrow-down"></i> Explore languages</a>
+            <a href="#" class="btn btn-outline" id="demoDropdownBtn"><i class="fas fa-play-circle"></i> Hover over navbar!</a>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-icon"><i class="fas fa-code"></i></div>
+            <div><strong>12+ Languages</strong><br>Python, JS, C++, Rust, Go, Java, Ruby, PHP, C, HTML/CSS</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon"><i class="fas fa-laptop-code"></i></div>
+            <div><strong>Live Editor</strong><br>Syntax highlighting + API execution</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon"><i class="fas fa-copy"></i></div>
+            <div><strong>Copy-paste ready</strong><br>Instant snippets for every concept</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Language cards grid (preserved) -->
+    <div class="container" id="languages">
+      <h2 class="section-title">📚 Language hubs — dedicated pages</h2>
+      <p class="section-sub">Hover on any navbar item to see large dropdowns with tutorials, compilers and snippets</p>
+      <div class="cards-grid">
+        <!-- Simplified card grid (kept for visual consistency) -->
+        <div class="lang-card"><div class="card-icon"><i class="fab fa-python"></i></div><h3>Python</h3><p>Modern syntax, data science, automation. Live Python compiler + snippets.</p><a href="python/index.html" class="card-link">Explore Python <i class="fas fa-arrow-right"></i></a></div>
+        <div class="lang-card"><div class="card-icon"><i class="fab fa-js"></i></div><h3>JavaScript</h3><p>ES6+, Node.js, interactive web. Run JS code directly.</p><a href="javascript/index.html" class="card-link">Explore JS <i class="fas fa-arrow-right"></i></a></div>
+        <div class="lang-card"><div class="card-icon"><i class="fab fa-html5"></i></div><h3>HTML/CSS/JS</h3><p>Live preview, responsive design, DOM manipulation.</p><a href="html-css/index.html" class="card-link">Explore Frontend <i class="fas fa-arrow-right"></i></a></div>
+        <div class="lang-card"><div class="card-icon"><i class="fas fa-microchip"></i></div><h3>C++</h3><p>Systems programming, DSA, OOP. Compile and run with GCC.</p><a href="cpp/index.html" class="card-link">Explore C++ <i class="fas fa-arrow-right"></i></a></div>
+        <div class="lang-card"><div class="card-icon"><i class="fab fa-java"></i></div><h3>Java</h3><p>Enterprise, Android, robust backends.</p><a href="java/index.html" class="card-link">Explore Java <i class="fas fa-arrow-right"></i></a></div>
+        <div class="lang-card"><div class="card-icon"><i class="fab fa-golang"></i></div><h3>Go</h3><p>Concurrent, fast, cloud-native.</p><a href="go/index.html" class="card-link">Explore Go <i class="fas fa-arrow-right"></i></a></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-col"><h4>CodeLens Hub</h4><p>Interactive coding environment<br>with tutorials & real execution.</p></div>
+        <div class="footer-col"><h4>Languages</h4><ul><li><a href="python/index.html">Python</a></li><li><a href="javascript/index.html">JavaScript</a></li><li><a href="html-css/index.html">HTML/CSS</a></li></ul></div>
+        <div class="footer-col"><h4>Resources</h4><ul><li><a href="#">Live Editor Docs</a></li><li><a href="#">Copy-paste snippets</a></li></ul></div>
+      </div>
+      <div class="copyright"><span>© 2025 CodeLens Hub — Smooth dropdowns & multi‑language mastery</span></div>
+    </div>
+  </footer>
+
+  <script>
+    // small demo for dropdown hint
+    const demoBtn = document.getElementById('demoDropdownBtn');
+    if(demoBtn) {
+      demoBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        alert("✨ Hover over any language in the navbar — Python, JavaScript, C++ etc — a large dropdown with tutorials, snippets and live compiler links will appear smoothly!");
+      });
+    }
+  </script>
+</body>
+</html>
